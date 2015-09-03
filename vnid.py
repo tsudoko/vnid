@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
   "protocol": 1,
   "client": "vnid",
-  "clientver": "0.0.2",
+  "clientver": "0.1.0",
 }
 
 #API_IP = '188.165.210.64'
@@ -16,18 +16,21 @@ API_IP = '188.165.233.33'
 API_PORT = 19534
 
 class Item:
-  def __init__(self, original_arg, type_="", id_=0):
+  def __init__(self, original_arg, type_="", id_=0, title=""):
     self.original_arg = original_arg
     self.type = type_
     self.id = id_
+    self.title = title
   def __str__(self):
-    return "{\"%s\", \"%s\", %i}" % (self.original_arg, self.type, self.id)
+    return "{\"%s\" \"%s\" %i \"%s\"}" % (self.original_arg, self.type, self.id, self.title)
 
 if len(sys.argv) < 2:
   print("usage: %s [id]..." % os.path.basename(sys.argv[0]))
   exit(2)
 
 s = socket.socket()
+
+jsonify = lambda x: ' '.join(x.split(' ')[1:])
 
 def cmd(s, msg):
   data = ""
@@ -59,18 +62,47 @@ def parse_id(id_):
   else: # <vn-id>
     return Item(id_, "vn", int(id_))
 
-ids = [parse_id(x).id for x in sys.argv[1:] if parse_id(x).type == "vn"]
-ids = json.dumps(ids)
+def cmd_query_items(s, items, flag="basic"):
+  queries = {} # key: exact query command (no filters), value: id list
+  results = []
+
+  for i in items:
+    if type(i) != Item:
+      raise TypeError(str(i) + ": the \'items\' argument of query_items() can only take lists of the Item class instances (got " + type(i) + ")")
+
+    query_cmd = "get " + i.type + " " + flag
+
+    if query_cmd in queries and queries[query_cmd]:
+      queries[query_cmd].append(i.id)
+    else:
+      queries[query_cmd] = [i.id]
+
+  #print(queries)
+
+  for k, v in queries.items():
+    print(json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items'])
+    results += json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items']
+
+  for i in items:
+    for j in results:
+      if i.id == j['id']:
+        if j['original']:
+          i.title = j['original']
+        else:
+          i.title = j['title']
+
+  return items
+
+
+items = [parse_id(x) for x in sys.argv[1:]]
 s.connect((API_IP, API_PORT))
 
 cmd(s, "login " + json.dumps(CREDENTIALS))
+items = cmd_query_items(s, items)
 
 """
-info = ' '.join(cmd(s, "get vn basic (id = " + ids + ")").split(' ')[1:])
-for i in json.loads(info)['items']:
-  print(i['title'])
+for i in items:
+  print(i.original_arg + '\t' + i.title)
 """
-
-print(cmd(s, "get vn basic (id = " + ids + ")"))
 
 s.close()
