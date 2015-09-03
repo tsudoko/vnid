@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
   "protocol": 1,
   "client": "vnid",
-  "clientver": 0,
+  "clientver": "0.0.2",
 }
 
 #API_IP = '188.165.210.64'
