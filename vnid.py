@@ -35,7 +35,7 @@ def cmd(s, msg):
   return data
 
 
-ids = json.dumps([x for x in sys.argv[1:]])
+ids = json.dumps(sys.argv[1:])
 s.connect((API_IP, API_PORT))
 
 cmd(s, "login " + json.dumps(CREDENTIALS))
