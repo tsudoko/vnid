@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
   "protocol": 1,
   "client": "vnid",
-  "clientver": "0.2.1",
+  "clientver": "0.3.0",
 }
 
 #API_IP = '188.165.210.64'
@@ -45,20 +45,12 @@ def cmd(s, msg):
 
   return data
 
-# id ::= "v" <vn-id> | "r" <release-id> | <vn-id> "_" <release-id> | <vn-id>
+# id ::= "v" <vn-id> | "r" <release-id> | <vn-id>
 def parse_id(id_):
   if id_.startswith("v"): # "v" <vn-id>
     return Item(id_, "vn", int(id_[1:]))
   elif id_.startswith("r"): # "r" <release-id>
     return Item(id_, "release", int(id_[1:]))
-  elif '_' in id_: # <vn-id> "_" <release-id>
-    split_id = id_.split('_')
-
-    if len(split_id) != 2:
-      raise ValueError("invalid id")
-
-    # XXX: (maybe) check if release id matches vn id (would introduce side effects)
-    return Item(id_, "release", int(split_id[1]))
   else: # <vn-id>
     return Item(id_, "vn", int(id_))
 
