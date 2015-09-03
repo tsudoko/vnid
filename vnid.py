@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
   "protocol": 1,
   "client": "vnid",
-  "clientver": "0.1.0",
+  "clientver": "0.2.0",
 }
 
 #API_IP = '188.165.210.64'
@@ -80,7 +80,7 @@ def cmd_query_items(s, items, flag="basic"):
   #print(queries)
 
   for k, v in queries.items():
-    print(json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items'])
+    #print(json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items'])
     results += json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items']
 
   for i in items:
@@ -100,9 +100,7 @@ s.connect((API_IP, API_PORT))
 cmd(s, "login " + json.dumps(CREDENTIALS))
 items = cmd_query_items(s, items)
 
-"""
 for i in items:
   print(i.original_arg + '\t' + i.title)
-"""
 
 s.close()
