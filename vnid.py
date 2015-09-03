@@ -22,8 +22,17 @@ if len(sys.argv) < 2:
 s = socket.socket()
 
 def cmd(s, msg):
+  data = ""
+  now = b""
+
   s.send(bytes(msg + "\x04", "UTF-8"))
-  return s.recv(512).decode().strip("\x04")
+
+  while not now.endswith(b"\x04"):
+    now = s.recv(1024)
+    if not now: break # should protect from infinite loop on a broken connection
+    data += now.decode().strip("\x04")
+
+  return data
 
 
 ids = json.dumps([x for x in sys.argv[1:]])
