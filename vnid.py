@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
   "protocol": 1,
   "client": "vnid",
-  "clientver": "0.2.0",
+  "clientver": "0.2.1",
 }
 
 #API_IP = '188.165.210.64'
@@ -62,7 +62,7 @@ def parse_id(id_):
   else: # <vn-id>
     return Item(id_, "vn", int(id_))
 
-def cmd_query_items(s, items, flag="basic"):
+def cmd_query_items(s, items, flags="basic"):
   queries = {} # key: exact query command (no filters), value: id list
   results = []
 
@@ -70,7 +70,7 @@ def cmd_query_items(s, items, flag="basic"):
     if type(i) != Item:
       raise TypeError(str(i) + ": the \'items\' argument of query_items() can only take lists of the Item class instances (got " + type(i) + ")")
 
-    query_cmd = "get " + i.type + " " + flag
+    query_cmd = "get " + i.type + " " + flags
 
     if query_cmd in queries and queries[query_cmd]:
       queries[query_cmd].append(i.id)
@@ -81,7 +81,14 @@ def cmd_query_items(s, items, flag="basic"):
 
   for k, v in queries.items():
     #print(json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items'])
-    results += json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items']
+    i = 1
+
+    while True:
+      response = json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i}))))
+      results += response['items']
+      if not response['more']: break
+      i += 1
+      
 
   for i in items:
     for j in results:
