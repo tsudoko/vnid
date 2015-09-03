@@ -15,6 +15,9 @@ CREDENTIALS = {
 API_IP = '188.165.233.33' # api.vndb.org takes a while to resolve for some reason, so we're using the IP address
 API_PORT = 19534
 
+class VNDBError(Exception):
+  pass
+
 class Item:
   def __init__(self, original_arg, type_="", id_=0, title=""):
     self.original_arg = original_arg
@@ -30,7 +33,17 @@ if len(sys.argv) < 2:
 
 s = socket.socket()
 
-jsonify = lambda x: ' '.join(x.split(' ')[1:])
+def parse_response(response):
+  r = response.split(' ')
+
+  name = r[0]
+  json_ = json.loads(' '.join(r[1:]))
+  print(json_)
+
+  if name == "error":
+    raise VNDBError(json_['id'] + (": " + json_['msg'] if "msg" in json_ and json_['msg'] else ''))
+
+  return json_
 
 def cmd(s, msg):
   data = ""
@@ -72,11 +85,11 @@ def cmd_query_items(s, items, flags="basic"):
   #print(queries)
 
   for k, v in queries.items():
-    #print(json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items'])
+    #print(parse_response(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items']
     i = 1
 
     while True:
-      response = json.loads(jsonify(cmd(s, k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i}))))
+      response = parse_response(cmd(s, k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i})))
       results += response['items']
       if not response['more']: break
       i += 1
