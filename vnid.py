@@ -132,8 +132,8 @@ def cmd_query_items(s, items, flags="basic"):
     return items
 
 
-s = login()
 items = [parse_id(x) for x in sys.argv[1:]]
+s = login()
 items = cmd_query_items(s, items)
 
 for i in items:
