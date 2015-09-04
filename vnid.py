@@ -34,7 +34,23 @@ if len(sys.argv) < 2:
     print("usage: %s [id]..." % os.path.basename(sys.argv[0]), file=sys.stderr)
     exit(2)
 
-s = socket.socket()
+
+def login(username="", password=""):
+    s = socket.socket()
+
+    login_data = CREDENTIALS
+
+    if bool(username) != bool(password):
+        raise Exception("not enough credentials")
+
+    if username and password:
+        login_data['username'] = username
+        login_data['password'] = password
+
+    s.connect((API_IP, API_PORT))
+    cmd(s, "login " + json.dumps(login_data))
+
+    return s
 
 
 def parse_response(response):
@@ -116,10 +132,8 @@ def cmd_query_items(s, items, flags="basic"):
     return items
 
 
+s = login()
 items = [parse_id(x) for x in sys.argv[1:]]
-s.connect((API_IP, API_PORT))
-
-cmd(s, "login " + json.dumps(CREDENTIALS))
 items = cmd_query_items(s, items)
 
 for i in items:
