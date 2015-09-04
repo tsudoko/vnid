@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
     "protocol": 1,
     "client": "vnid",
-    "clientver": "0.3.3",
+    "clientver": "0.4.0",
 }
 
 #API_IP = '188.165.210.64'
@@ -29,10 +29,6 @@ class Item:
 
     def __str__(self):
         return "{\"%s\" \"%s\" %i \"%s\"}" % (self.original_arg, self.type, self.id, self.title)
-
-if len(sys.argv) < 2:
-    print("usage: %s [id]..." % os.path.basename(sys.argv[0]), file=sys.stderr)
-    exit(2)
 
 
 def login(username="", password=""):
@@ -132,11 +128,19 @@ def cmd_query_items(s, items):
     return items
 
 
-items = [parse_id(x) for x in sys.argv[1:]]
-s = login()
-items = cmd_query_items(s, items)
+def main():
+    if len(sys.argv) < 2:
+        print("usage: %s [id]..." % os.path.basename(sys.argv[0]), file=sys.stderr)
+        exit(1)
 
-for i in items:
-    print(i.original_arg + '\t' + i.title)
+    items = [parse_id(x) for x in sys.argv[1:]]
+    s = login()
+    items = cmd_query_items(s, items)
 
-s.close()
+    for i in items:
+        print(i.original_arg + '\t' + i.title)
+
+    s.close()
+
+if __name__ == "__main__":
+    main()
