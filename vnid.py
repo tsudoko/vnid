@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
     "protocol": 1,
     "client": "vnid",
-    "clientver": "0.4.0",
+    "clientver": "0.4.1",
 }
 
 #API_IP = '188.165.210.64'
@@ -134,13 +134,15 @@ def main():
         exit(1)
 
     items = [parse_id(x) for x in sys.argv[1:]]
-    s = login()
-    items = cmd_query_items(s, items)
+    try:
+        s = login()
+        items = cmd_query_items(s, items)
 
-    for i in items:
-        print(i.original_arg + '\t' + i.title)
+        for i in items:
+            print(i.original_arg + '\t' + i.title)
 
-    s.close()
+    finally:
+        s.close()
 
 if __name__ == "__main__":
     main()
