@@ -92,7 +92,6 @@ def parse_id(id_):
 
 
 def cmd_query_items(s, items):
-    # BIG TODO: make it work not only for IDs
     queries = {} # key: exact query command (no filters), value: id list
     results = []
 
