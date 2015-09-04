@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
     "protocol": 1,
     "client": "vnid",
-    "clientver": "0.3.2",
+    "clientver": "0.3.3",
 }
 
 #API_IP = '188.165.210.64'
@@ -42,7 +42,7 @@ def parse_response(response):
 
     name = r[0]
     json_ = json.loads(' '.join(r[1:]))
-    print(json_)
+    #print(json_)
 
     if name == "error":
         raise VNDBError(json_['id'] + (": " + json_['msg'] if "msg" in json_ and json_['msg'] else ''))
