@@ -31,7 +31,7 @@ class Item:
         return "{\"%s\" \"%s\" %i \"%s\"}" % (self.original_arg, self.type, self.id, self.title)
 
 if len(sys.argv) < 2:
-    print("usage: %s [id]..." % os.path.basename(sys.argv[0]))
+    print("usage: %s [id]..." % os.path.basename(sys.argv[0]), file=sys.stderr)
     exit(2)
 
 s = socket.socket()
