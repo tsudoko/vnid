@@ -91,7 +91,8 @@ def parse_id(id_):
         return Item(id_, "vn", int(id_))
 
 
-def cmd_query_items(s, items, flags="basic"):
+def cmd_query_items(s, items):
+    # BIG TODO: make it work not only for IDs
     queries = {} # key: exact query command (no filters), value: id list
     results = []
 
@@ -99,7 +100,7 @@ def cmd_query_items(s, items, flags="basic"):
         if type(i) != Item:
             raise TypeError(str(i) + ": the \'items\' argument of query_items() can only take lists of the Item class instances (got " + type(i) + ")")
 
-        query_cmd = "get " + i.type + " " + flags
+        query_cmd = "get " + i.type + " basic"
 
         if query_cmd in queries and queries[query_cmd]:
             queries[query_cmd].append(i.id)
