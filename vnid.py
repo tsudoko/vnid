@@ -7,7 +7,7 @@ import os
 CREDENTIALS = {
     "protocol": 1,
     "client": "vnid",
-    "clientver": "0.4.1",
+    "clientver": "0.4.2",
 }
 
 #API_IP = '188.165.210.64'
@@ -63,7 +63,7 @@ def parse_response(response):
 
 
 def cmd(s, msg):
-    data = ""
+    data = b""
     now = b""
 
     s.send(bytes(msg + "\x04", "UTF-8"))
@@ -72,9 +72,9 @@ def cmd(s, msg):
         now = s.recv(1024)
         if not now:
             break # should protect from infinite loop on a broken connection
-        data += now.decode().strip("\x04")
+        data += now
 
-    return data
+    return data.decode().strip("\x04")
 
 
 # id ::= "v" <vn-id> | "r" <release-id> | <vn-id>
