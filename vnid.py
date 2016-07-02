@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-import socket
-import json
 import sys
 import os
+
+from vndb_simple import *
 
 CREDENTIALS = {
     "protocol": 1,
@@ -16,10 +16,6 @@ API_IP = '188.165.233.33' # api.vndb.org takes a while to resolve for some reaso
 API_PORT = 19534
 
 
-class VNDBError(Exception):
-    pass
-
-
 class Item:
     def __init__(self, original_arg, type_="", id_=0, title=""):
         self.original_arg = original_arg
@@ -29,52 +25,6 @@ class Item:
 
     def __str__(self):
         return "{\"%s\" \"%s\" %i \"%s\"}" % (self.original_arg, self.type, self.id, self.title)
-
-
-def login(username="", password=""):
-    s = socket.socket()
-
-    login_data = CREDENTIALS
-
-    if bool(username) != bool(password):
-        raise Exception("not enough credentials")
-
-    if username and password:
-        login_data['username'] = username
-        login_data['password'] = password
-
-    s.connect((API_IP, API_PORT))
-    cmd(s, "login " + json.dumps(login_data))
-
-    return s
-
-
-def parse_response(response):
-    r = response.split(' ')
-
-    name = r[0]
-    json_ = json.loads(' '.join(r[1:]))
-    #print(json_)
-
-    if name == "error":
-        raise VNDBError(json_['id'] + (": " + json_['msg'] if "msg" in json_ and json_['msg'] else ''))
-
-    return json_
-
-
-def cmd(s, msg):
-    data = b""
-    now = b""
-
-    s.send(bytes(msg + "\x04", "UTF-8"))
-
-    while not now.endswith(b"\x04"):
-        now = s.recv(1024)
-        if not now:
-            break # should protect from infinite loop on a broken connection
-        data += now
-
-    return data.decode().strip("\x04")
 
 
 # id ::= "v" <vn-id> | "r" <release-id> | <vn-id>
@@ -135,7 +85,7 @@ def main():
 
     items = [parse_id(x) for x in sys.argv[1:]]
     try:
-        s = login()
+        s = login(API_IP, API_PORT, CREDENTIALS)
         items = cmd_query_items(s, items)
 
         for i in items:
