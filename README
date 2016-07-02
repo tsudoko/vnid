@@ -1,0 +1,6 @@
+vnid is a Python script which can be used to retrieve VN titles from VNDB.
+
+vnid can query visual novels and releases. If no prefix is given, "v" is
+assumed. The module used for communicating with the VNDB API is vndb_simple.py.
+To pack vnid and vndb_simple into a single executable file, type `make`. To
+install, do `sudo make install`.
