@@ -7,7 +7,7 @@ import vndb_simple
 
 CREDENTIALS = {
     "client": "vnid",
-    "clientver": "0.4.2",
+    "clientver": "0.5.0",
 }
 
 API_IP = '188.165.233.33' # api.vndb.org takes a while to resolve for some reason, so we're using the IP address
