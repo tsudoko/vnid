@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
+import json
 import sys
 import os
 
-from vndb_simple import *
+import vndb_simple
 
 CREDENTIALS = {
-    "protocol": 1,
     "client": "vnid",
     "clientver": "0.4.2",
 }
@@ -13,7 +13,6 @@ CREDENTIALS = {
 #API_IP = '188.165.210.64'
 # use api.vndb.org if this one fails
 API_IP = '188.165.233.33' # api.vndb.org takes a while to resolve for some reason, so we're using the IP address
-API_PORT = 19534
 
 
 class Item:
@@ -37,7 +36,7 @@ def parse_id(id_):
         return Item(id_, "vn", int(id_))
 
 
-def cmd_query_items(s, items):
+def query_items(s, items):
     queries = {} # key: exact query command (no filters), value: id list
     results = []
 
@@ -52,14 +51,11 @@ def cmd_query_items(s, items):
         else:
             queries[query_cmd] = [i.id]
 
-    #print(queries)
-
     for k, v in queries.items():
-        #print(parse_response(cmd(s, k + " (id = " + json.dumps(v) + ")")))['items']
         i = 1
 
         while True:
-            response = parse_response(cmd(s, k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i})))
+            response = s.cmd(k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i}))
             results += response['items']
 
             if not response['more']:
@@ -84,9 +80,10 @@ def main():
         exit(1)
 
     items = [parse_id(x) for x in sys.argv[1:]]
+
     try:
-        s = login(API_IP, API_PORT, CREDENTIALS)
-        items = cmd_query_items(s, items)
+        s = vndb_simple.VNDBSession(addr=API_IP, credentials=CREDENTIALS)
+        items = query_items(s, items)
 
         for i in items:
             print(i.original_arg + '\t' + i.title)
