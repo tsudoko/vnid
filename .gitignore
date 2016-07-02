@@ -1,0 +1,6 @@
+*.swp
+
+__pycache__
+
+__main__.py
+vnid.pyz
