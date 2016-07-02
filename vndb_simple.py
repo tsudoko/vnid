@@ -23,10 +23,8 @@ class VNDBSession:
         self.__addr = addr
         self.__port = port
 
-
     def __str__(self):
         return "<VNDBSession (%s:%s)>" % (self.__addr, self.__port)
-
 
     def _parse_response(self, response):
         r = response.split(' ')
@@ -38,7 +36,6 @@ class VNDBSession:
             raise VNDBError(json_['id'] + (": " + json_['msg'] if "msg" in json_ and json_['msg'] else ''))
 
         return json_
-
 
     def _cmd(self, msg):
         data = b""
@@ -54,10 +51,8 @@ class VNDBSession:
 
         return data.decode().strip("\x04")
 
-
     def close(self):
         self.__s.close()
-
 
     def cmd(self, msg):
         return self._parse_response(self._cmd(msg))
