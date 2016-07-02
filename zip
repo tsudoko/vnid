@@ -2,12 +2,13 @@
 
 # dumb zip wrapper, used in this project to make single-file python executables
 
-bin_exists() { hash "$1" >/dev/null 1>&2; }
+bin_exists() { hash "$1" >/dev/null 2>&1; }
 
 if bin_exists 7z; then
     7z a "$@"
 elif bin_exists zip; then
     zip "$@"
 else
-    echo "please install 7z or zip"
+    echo "please install 7z or zip" >&2
+    exit 1
 fi
