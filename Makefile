@@ -1,8 +1,8 @@
 PREFIX ?= /usr
 
-.PHONY: clean
+.PHONY: install clean
 
-all: vndb_simple.py vnid.py
+vnid.pyz: vndb_simple.py vnid.py
 # the following works on python3 >= 3.5:
 #	python3 -m zipapp $(CURDIR) -p "/usr/bin/env python3" -m "vnid:main"
 #	mv ../vnid.pyz $(CURDIR)
