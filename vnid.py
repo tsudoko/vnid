@@ -24,7 +24,7 @@ class Item:
 
 # id ::= "v" <vn-id> | "r" <release-id> | <vn-id>
 def parse_id(id_):
-    if not id_[1:].isdigit():
+    if len(id_) > 2 and not id_[1:].isdigit():
         raise Exception("invalid id string: %s" % id_)
 
     if id_.startswith("v"): # "v" <vn-id>
