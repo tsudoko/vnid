@@ -36,12 +36,12 @@ class VNDBSession:
         r = response.split(' ')
 
         name = r[0]
-        json_ = json.loads(' '.join(r[1:]))
+        j = json.loads(' '.join(r[1:]))
 
         if name == "error":
-            raise VNDBError(json_['id'] + (": " + json_['msg'] if "msg" in json_ and json_['msg'] else ''))
+            raise VNDBError(j['id'] + (": " + j['msg'] if "msg" in j and j['msg'] else ''))
 
-        return json_
+        return j
 
     def _cmd(self, msg):
         data = b""
