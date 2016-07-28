@@ -26,7 +26,7 @@ class VNDBSession:
             self.__s = c.wrap_socket(self.__s, server_hostname=addr)
 
         self.__s.connect((addr, port))
-        self._cmd("login " + json.dumps(credentials))
+        self.cmd("login " + json.dumps(credentials))
 
         self.__addr = addr
         self.__port = port
@@ -38,6 +38,9 @@ class VNDBSession:
         r = response.split(' ')
 
         name = r[0]
+        if len(r) == 1:
+            return None
+
         j = json.loads(' '.join(r[1:]))
 
         if name == "error":
