@@ -1,3 +1,4 @@
+import logging
 import socket
 import json
 
@@ -46,6 +47,7 @@ class VNDBSession:
         data = b""
         now = b""
 
+        logging.debug("%s:%s << %s" % (self.__addr, self.__port, msg))
         self.__s.send(bytes(msg + "\x04", "UTF-8"))
 
         while not now.endswith(b"\x04"):
@@ -54,7 +56,9 @@ class VNDBSession:
                 break # should protect from infinite loops on a broken connection
             data += now
 
-        return data.decode().strip("\x04")
+        response = data.decode().strip("\x04")
+        logging.debug("%s:%s >> %s" % (self.__addr, self.__port, response))
+        return response
 
     def close(self):
         self.__s.close()
