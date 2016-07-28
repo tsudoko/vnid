@@ -83,14 +83,13 @@ def main():
         exit(1)
 
     items = [parse_id(x) for x in sys.argv[1:]]
+    s = vndb_simple.VNDBSession(addr=API_IP, credentials=CREDENTIALS)
 
     try:
-        s = vndb_simple.VNDBSession(addr=API_IP, credentials=CREDENTIALS)
         items = query_items(s, items)
 
         for i in items:
             print(i.original_arg + '\t' + i.title)
-
     finally:
         s.close()
 
