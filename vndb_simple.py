@@ -3,6 +3,10 @@ import socket
 import json
 
 
+class VNDBThrottle(Exception):
+    pass
+
+
 class VNDBError(Exception):
     pass
 
@@ -44,6 +48,9 @@ class VNDBSession:
         j = json.loads(' '.join(r[1:]))
 
         if name == "error":
+            if j['id'] == "throttled":
+                raise VNDBThrottle("%f:%f" % (j['minwait'], j['fullwait']))
+
             raise VNDBError(j['id'] + (": " + j['msg'] if "msg" in j and j['msg'] else ''))
 
         return j

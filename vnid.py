@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 import json
+import logging
 import sys
+import time
 import os
 
 import vndb_simple
 
 CREDENTIALS = {
     "client": "vnid",
-    "clientver": "0.6.0",
+    "clientver": "0.6.1",
 }
 
 
@@ -54,9 +56,21 @@ def query_items(s, items):
 
     for k, v in queries.items():
         i = 1
+        wait = 0
 
         while True:
-            response = s.cmd(k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i}))
+            if wait:
+                time.sleep(wait)
+                wait = 0
+
+            try:
+                response = s.cmd(k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i}))
+            except vndb_simple.VNDBThrottle as e:
+                mw, wait = map(float, e.split(":"))
+                logging.warning("throttled, resend after %fs and wait %fs" % (mw, wait))
+                time.sleep(mw)
+                response = s.cmd(k + " (id = " + json.dumps(v) + ") " + json.dumps({"page": i}))
+
             results += response['items']
 
             if not response['more']:
