@@ -7,10 +7,8 @@ import vndb_simple
 
 CREDENTIALS = {
     "client": "vnid",
-    "clientver": "0.5.1",
+    "clientver": "0.6.0",
 }
-
-API_IP = '188.165.233.33' # api.vndb.org takes a while to resolve for some reason, so we're using the IP address
 
 
 class Item:
@@ -83,7 +81,7 @@ def main():
         exit(1)
 
     items = [parse_id(x) for x in sys.argv[1:]]
-    s = vndb_simple.VNDBSession(addr=API_IP, credentials=CREDENTIALS)
+    s = vndb_simple.VNDBSession(credentials=CREDENTIALS)
 
     try:
         items = query_items(s, items)

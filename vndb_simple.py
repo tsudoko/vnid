@@ -12,10 +12,15 @@ class VNDBSession:
     __addr = None
     __port = None
 
-    def __init__(self, addr="api.vndb.org", port=19534, credentials={}):
+    def __init__(self, addr="api.vndb.org", port=19535, use_ssl=True, credentials={}):
         credentials['protocol'] = 1
 
         self.__s = socket.socket()
+
+        if use_ssl:
+            import ssl
+            c = ssl.create_default_context()
+            self.__s = c.wrap_socket(self.__s, server_hostname=addr)
 
         self.__s.connect((addr, port))
         self._cmd("login " + json.dumps(credentials))
