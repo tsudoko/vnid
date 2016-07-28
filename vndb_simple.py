@@ -13,6 +13,8 @@ class VNDBSession:
     __addr = None
     __port = None
 
+    _ = lambda self, x: "%s:%s %s" % (self.__addr, self.__port, x)
+
     def __init__(self, addr="api.vndb.org", port=19535, use_ssl=True, credentials={}):
         credentials['protocol'] = 1
 
@@ -47,7 +49,7 @@ class VNDBSession:
         data = b""
         now = b""
 
-        logging.debug("%s:%s << %s" % (self.__addr, self.__port, msg))
+        logging.debug(self._("<< %s") % msg)
         self.__s.send(bytes(msg + "\x04", "UTF-8"))
 
         while not now.endswith(b"\x04"):
@@ -57,7 +59,7 @@ class VNDBSession:
             data += now
 
         response = data.decode().strip("\x04")
-        logging.debug("%s:%s >> %s" % (self.__addr, self.__port, response))
+        logging.debug(self._(">> %s") % response)
         return response
 
     def close(self):
